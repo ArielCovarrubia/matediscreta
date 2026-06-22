@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Presentación Shell Sort - ICINF1103</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; color: #333; overflow: hidden; }
+        .slide-container { display: none; width: 100vw; height: 100vh; padding: 60px; background: white; position: relative; }
+        .slide-container.active { display: flex; flex-direction: column; justify-content: flex-start; }
+        
+        /* Indicadores de barra */
+        .top-bar { position: absolute; top: 0; left: 0; width: 100%; height: 8px; background: #e0e0e0; }
+        .top-bar-fill { height: 100%; background: #0056b3; transition: width 0.3s ease; }
+        .slide-header { border-left: 5px solid #0056b3; padding-left: 15px; margin-bottom: 30px; }
+        .slide-header h1 { font-size: 2.5rem; text-transform: uppercase; color: #1a1a1a; }
+        
+        .content { flex: 1; display: flex; gap: 40px; font-size: 1.2rem; line-height: 1.6; }
+        .full-width { width: 100%; }
+        .half-width { width: 50%; }
+        
+        /* Tablas Estilizadas */
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 1rem; }
+        th, td { border: 1px solid #ddd; padding: 12px; text-align: left; }
+        th { background-color: #0056b3; color: white; }
+        tr:nth-child(even) { background-color: #f9f9f9; }
+        
+        /* Bloques de Código y Capturas */
+        pre { background: #1e1e1e; color: #d4d4d4; padding: 20px; border-radius: 8px; font-family: 'Consolas', monospace; font-size: 0.95rem; overflow-y: auto; height: 85%; }
+        .screenshot-placeholder { border: 3px dashed #999; background: #eaeaea; display: flex; align-items: center; justify-content: center; height: 180px; border-radius: 8px; text-align: center; font-weight: bold; color: #555; margin-top: 10px; }
+        
+        /* Controles */
+        .controls { position: absolute; bottom: 20px; right: 40px; display: flex; gap: 15px; z-index: 100; }
+        .btn { background: #0056b3; color: white; border: none; padding: 10px 20px; font-size: 1rem; border-radius: 5px; cursor: pointer; }
+        .btn:hover { background: #004094; }
+        .slide-number { position: absolute; bottom: 25px; left: 40px; font-size: 1rem; color: #777; }
+        
+        ul { margin-left: 25px; }
+        li { margin-bottom: 10px; }
+        .highlight { color: #0056b3; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <div class="top-bar"><div class="top-bar-fill" id="progress"></div></div>
+
+    <div class="slide-container active" id="slide1">
+        <div style="margin: auto; text-align: center; max-width: 800px;">
+            <h2 style="color: #0056b3; letter-spacing: 2px; font-size: 1.5rem; margin-bottom: 10px;">ICINF1103 - ALGORITMOS Y ESTRUCTURA DE DATOS</h2>
+            <h1 style="font-size: 4rem; margin-bottom: 20px; color: #1a1a1a;">Método de Ordenamiento:<br><span style="color:#0056b3;">Shell Sort</span></h1>
+            <div style="margin-top: 40px; border-top: 2px solid #ddd; padding-top: 20px; font-size: 1.2rem; color: #555;">
+                <p><strong>Integrantes:</strong> Grupo de Proyecto</p>
+                <p><strong>Sección:</strong> 2026 | <strong>Fecha:</strong> Junio 2026</p>
+                <p style="margin-top: 15px; font-size: 0.9rem; color: #999;">Universidad Católica de Temuco</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide2">
+        <div class="slide-header"><h1>A. Presentación del Problema</h1></div>
+        <div class="content">
+            <div class="half-width">
+                <h3 class="highlight">¿Qué es ordenar datos?</h3>
+                <p>Es el proceso de organizar elementos de una colección en una secuencia específica (ascendente o descendente) basado en un criterio de comparación lógica.</p>
+                <br>
+                <h3 class="highlight">Tipos de datos soportados:</h3>
+                <ul>
+                    <li><strong>Numéricos:</strong> Enteros (`int`) y de punto flotante (`float`).</li>
+                    <li><strong>Cadenas de texto (`str`):</strong> Ordenación mediante equivalencia de caracteres alfabéticos (ASCII).</li>
+                </ul>
+            </div>
+            <div class="half-width" style="background: #f8f9fa; padding: 25px; border-radius: 8px;">
+                <h3 class="highlight">Objetivo del Método Shell Sort</h3>
+                <p>Optimizar el ordenamiento por inserción directa tradicional al permitir la comparación e intercambio de elementos que se encuentran en posiciones distantes, reduciendo drásticamente los desplazamientos necesarios.</p>
+                <br>
+                <h3 class="highlight">Situación Real de Aplicación</h3>
+                <p>Sistemas embebidos y dispositivos IoT (sensores de hardware empotrados) con memoria RAM extremadamente limitada que necesitan procesar y ordenar ráfagas de lecturas rápidas sin incurrir en desbordamientos de pila causados por recursión masiva.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide3">
+        <div class="slide-header"><h1>B. Abstracción Lógica del Algoritmo</h1></div>
+        <div class="content">
+            <div class="half-width">
+                <h3 class="highlight">Proceso Visual del Shell Sort (Pasada 1)</h3>
+                <p style="font-size:1rem; margin-bottom: 10px;">Tamaño original del arreglo $N = 9$ | Intervalo Inicial = $9 // 2 = 4$.</p>
+                <div style="background:#fff; border:1px solid #ddd; padding:15px; border-radius:8px; text-align:center;">
+                    <p><strong>Arreglo en Memoria:</strong></p>
+                    <table style="margin: 10px 0; font-size:0.9rem;">
+                        <tr style="background:#eee; color:#333;"><td style="padding:5px;">Índice</td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+                        <tr><td style="font-weight:bold; background:#e0eefd;">Valor</td><td style="background:#ffe3e3;">2</td><td>4</td><td>5</td><td>6</td><td style="background:#ffe3e3;">7</td><td>10</td><td>13</td><td>14</td><td>9</td></tr>
+                    </table>
+                    <p style="font-size:0.95rem; text-align:left; color:#555;">💡 <strong>Mecánica:</strong> El algoritmo segmenta la lista en subgrupos virtuales separados por la distancia del <span class="highlight">salto</span>. Compara el índice `0` con el `4` (`2` vs `7`), luego el `1` con el `5` (`4` vs `10`), moviendo los valores mayores al extremo derecho rápido.</p>
+                </div>
+            </div>
+            <div class="half-width">
+                <h3 class="highlight">Estructura del Diagrama de Flujo</h3>
+                <p>Para cumplir con los productos obligatorios, el diseño lógico se mapea de la siguiente manera reemplazando el pseudocódigo lineal:</p>
+                <ul>
+                    <li><strong>Inicio:</strong> Captura la estructura de datos entrante como parámetro.</li>
+                    <li><strong>Proceso Inicial:</strong> `largo = len(lista)`, `salto = largo // 2`.</li>
+                    <li><strong>Ciclo Principal (Mientras `salto > 0`):</strong> Controla la reducción de la brecha.</li>
+                    <li><strong>Ciclo Interno (Desde `salto` hasta `largo - 1`):</strong> Guarda el elemento evaluado en una variable temporal y efectúa las pasadas de comparación hacia atrás.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide4">
+        <div class="slide-header"><h1>C. Explicación Matemática y Resolutiva</h1></div>
+        <div class="content full-width" style="flex-direction: column; gap:15px;">
+            <p>El comportamiento resolutivo del algoritmo se fundamenta en las siguientes certezas lógicas:</p>
+            <ul>
+                <li><strong>Garantía de Término:</strong> El ciclo principal evalúa de forma estricta la condición `salto > 0`. Como en cada iteración la brecha se recalcula mediante división entera (`salto //= 2`), el valor de la variable disminuye de forma monótona convergente hasta alcanzar inexorablemente el valor `0`, deteniendo el programa.</li>
+                <li><strong>Certeza del Ordenamiento:</strong> En su iteración final, el algoritmo opera con un `salto == 1`. Esto transforma la ejecución exactamente en un ordenamiento por inserción directa. Al haber aproximado previamente los elementos pesados a sus zonas correspondientes en pasadas con saltos mayores, la lista llega "casi ordenada", requiriendo un esfuerzo mínimo ($O(n)$) para finalizar ordenada al 100%.</li>
+            </ul>
+            
+            <h3 class="highlight" style="margin-top: 10px;">Análisis de Complejidad Temporal (Nivel Introductorio)</h3>
+            <table>
+                <tr>
+                    <th>Escenario Técnico</th>
+                    <th>Complejidad Formal</th>
+                    <th>Descripción Operacional</th>
+                </tr>
+                <tr>
+                    <td><strong>Mejor Caso</strong></td>
+                    <td>$\Omega(n \log n)$</td>
+                    <td>La lista ya se encuentra ordenada. Realiza las comparaciones de brecha obligatorias pero efectúa cero intercambios moleculares en memoria.</td>
+                </tr>
+                <tr>
+                    <td><strong>Caso Promedio</strong></td>
+                    <td>$O(n^{1.5})$</td>
+                    <td>Depende intrínsecamente de la secuencia de brechas escogida. La reducción sucesiva por la mitad ofrece un rendimiento balanceado y eficiente en colecciones intermedias.</td>
+                </tr>
+                <tr>
+                    <td><strong>Peor Caso</strong></td>
+                    <td>$O(n^2)$</td>
+                    <td>Ocurre cuando los elementos mayores se encuentran intercalados de forma simétrica con los menores, forzando desplazamientos máximos.</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide5">
+        <div class="slide-header"><h1>D. Implementación Técnica en Python</h1></div>
+        <div class="content">
+            <div class="half-width" style="height: 100%;">
+<pre><code>def shell_sort(lista):
+    largo = len(lista)
+    
+    # Validación funcional obligatoria
+    if largo <= 1:
+        return lista
+        
+    salto = largo // 2
+    while salto > 0:
+        for i in range(salto, largo):
+            valor_temporal = lista[i]
+            posicion = i
+            
+            # Desplazamiento condicionado hacia atrás
+            while posicion >= salto and lista[posicion - salto] > valor_temporal:
+                lista[posicion] = lista[posicion - salto]
+                posicion -= salto
+                
+            lista[posicion] = valor_temporal
+        salto //= 2  # Reducción estricta de la brecha
+    return lista
+</code></pre>
+            </div>
+            <div class="half-width">
+                <h3 class="highlight">Puntos Críticos de la Implementación</h3>
+                <ul>
+                    <li><strong>Uso Extricto de Funciones:</strong> Recibe la colección directamente como parámetro y efectúa un <span class="highlight">retorno</span> limpio de la estructura procesada.</li>
+                    <li><strong>Prohibición de Métodos Nativos:</strong> No se utiliza `sort()` ni `sorted()`, garantizando el desarrollo manual puro requerido por la rúbrica.</li>
+                    <li><strong>Variables Comprensibles:</strong> Se reemplazan nomenclaturas ambiguas (`gap`, `temp`, `j`) por términos explícitos en español (`salto`, `valor_temporal`, `posicion`) para asegurar los puntos de legibilidad.</li>
+                    <li><strong>Manejo Óptimo de Memoria:</strong> Opera de forma <em>In-place</em> modificando los índices internos existentes sin duplicar colecciones.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide6">
+        <div class="slide-header"><h1>E. Prueba de Escritorio Manual</h1></div>
+        <div class="content full-width" style="flex-direction:column; gap:10px;">
+            <p>Seguimiento detallado de variables en memoria utilizando una lista pequeña reglamentaria: <span class="highlight">`[12, 34, 5, 2]` ($n = 4$)</span>.</p>
+            <table>
+                <tr>
+                    <th>Paso Operativo</th>
+                    <th>Salto Actual</th>
+                    <th>Índices Evaluados</th>
+                    <th>Comparación Condicional</th>
+                    <th>¿Se ejecuta Intercambio?</th>
+                    <th>Estado de la Lista en Memoria</th>
+                </tr>
+                <tr style="font-weight:bold; background:#eee;">
+                    <td>Inicio</td><td>-</td><td>-</td><td>-</td><td>-</td><td>`[12, 34, 5, 2]`</td>
+                </tr>
+                <tr>
+                    <td><strong>Paso 1</strong></td><td>2</td><td>`0` y `2`</td><td>`lista[0] > lista[2]` (¿`12 > 5`?)</td><td><span style="color:green; font-weight:bold;">SÍ</span></td><td>`[5, 34, 12, 2]`</td>
+                </tr>
+                <tr>
+                    <td><strong>Paso 2</strong></td><td>2</td><td>`1` y `3`</td><td>`lista[1] > lista[3]` (¿`34 > 2`?)</td><td><span style="color:green; font-weight:bold;">SÍ</span></td><td>`[5, 2, 12, 34]`</td>
+                </tr>
+                <tr>
+                    <td><strong>Paso 3</strong></td><td>1</td><td>`0` y `1`</td><td>`lista[0] > lista[1]` (¿`5 > 2`?)</td><td><span style="color:green; font-weight:bold;">SÍ</span></td><td>`[2, 5, 12, 34]`</td>
+                </tr>
+                <tr>
+                    <td><strong>Paso 4</strong></td><td>1</td><td>`1` y `2`</td><td>`lista[1] > lista[2]` (¿`5 > 12`?)</td><td>NO</td><td>`[2, 5, 12, 34]`</td>
+                </tr>
+                <tr>
+                    <td><strong>Paso 5</strong></td><td>1</td><td>`2` y `3`</td><td>`lista[2] > lista[3]` (¿`12 > 34`?)</td><td>NO</td><td>`[2, 5, 12, 34]` <span class="highlight">(¡Ordenada!)</span></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide7">
+        <div class="slide-header"><h1>F. Verificación de Casos de Prueba</h1></div>
+        <div class="content">
+            <div class="half-width">
+                <h4 class="highlight">1. Lista Inversa y Desordenada</h4>
+                <p style="font-size: 0.95rem;">Evaluación de entrada descendente extrema: `[9, 7, 5, 3, 1]` $\rightarrow$ `[1, 3, 5, 7, 9]`.</p>
+                <div class="screenshot-placeholder">[AQUÍ PEGA TU CAPTURA DE PANTALLA DE LA TERMINAL CON LISTA INVERSA]</div>
+                
+                <h4 class="highlight" style="margin-top: 15px;">2. Lista con Elementos Repetidos</h4>
+                <p style="font-size: 0.95rem;">Comportamiento ante claves duplicadas: `[4, 2, 4, 1, 2]` $\rightarrow$ `[1, 2, 2, 4, 4]`.</p>
+                <div class="screenshot-placeholder">[AQUÍ PEGA TU CAPTURA DE PANTALLA DE LA TERMINAL CON DUPLICADOS]</div>
+            </div>
+            <div class="half-width">
+                <h4 class="highlight">3. Lista con Valores Negativos</h4>
+                <p style="font-size: 0.95rem;">Comprobación bajo el cero relativo: `[-5, 10, 0, -2]` $\rightarrow$ `[-5, -2, 0, 10]`.</p>
+                <div class="screenshot-placeholder">[AQUÍ PEGA TU CAPTURA DE PANTALLA DE LA TERMINAL CON NEGATIVOS]</div>
+                
+                <h4 class="highlight" style="margin-top: 15px;">4. Lista Vacía o Unitaria</h4>
+                <p style="font-size: 0.95rem;">Estructura al límite de datos: `[]` $\rightarrow$ `[]` (Retorno limpio e inmediato).</p>
+                <div class="screenshot-placeholder">[AQUÍ PEGA TU CAPTURA DE PANTALLA DE LA TERMINAL CON LISTA VACÍA]</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide8">
+        <div class="slide-header"><h1>G. Análisis Funcional y Limitaciones</h1></div>
+        <div class="content">
+            <div class="half-width">
+                <h3 class="highlight">Manejo de Mutabilidad en Memoria</h3>
+                <p>El algoritmo opera bajo la propiedad <span class="highlight">In-place</span>. Esto significa que realiza las modificaciones de ordenamiento reestructurando directamente los índices dentro del espacio físico de la lista original pasada por referencia, con una complejidad espacial constante de $O(1)$, evitando duplicar el consumo de hardware.</p>
+                <br>
+                <h3 class="highlight">Estabilidad del Algoritmo</h3>
+                <p>Shell Sort se clasifica de forma estricta como un algoritmo <span class="highlight">INESTABLE</span>. Debido a que las comparaciones e intercambios se realizan saltando elementos distantes intermedios, si existen dos registros con idéntica clave de ordenamiento, no se garantiza que mantengan la misma prioridad relativa inicial en la salida.</p>
+            </div>
+            <div class="half-width" style="background:#fff3f3; padding: 25px; border-radius: 8px; border: 1px solid #f5c6cb;">
+                <h3 style="color:#721c24;">Detección de Errores y Limitaciones de Python</h3>
+                <p style="color:#721c24;">El script implementa de forma robusta la ordenación de tipos de datos puros homólogos (cadenas de texto o números).</p>
+                <br>
+                <p style="color:#721c24;"><strong>Falla Crítica por Tipos Mezclados:</strong> Si la entrada suministrada contiene colecciones mixtas heterogéneas, como por ejemplo `[3, "Informatica", -1]`, el intérprete de Python detendrá la ejecución abruptamente lanzando un error del tipo <span style="font-family: monospace; font-weight: bold;">TypeError</span>. Esto ocurre debido a que las restricciones de seguridad internas del lenguaje prohíben de forma nativa la evaluación relacional lógica del operador "mayor que" (`>`) entre instancias numéricas y cadenas.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide9">
+        <div class="slide-header"><h1>H. Ventajas, Limitaciones y Comparación Formal</h1></div>
+        <div class="content">
+            <div class="half-width">
+                <h3 class="highlight">Ventajas Principales</h3>
+                <ul>
+                    <li><strong>Eficiencia de Recursos:</strong> No requiere asignación de estructuras auxiliares de datos adicionales en el sistema.</li>
+                    <li><strong>Rendimiento Evolucionado:</strong> Desplaza de forma ágil los elementos pesados, superando sustancialmente la lentitud cuadrática del método Burbuja (*Bubble Sort*) clásico.</li>
+                </ul>
+                <br>
+                <h3 class="highlight">Limitaciones Técnicas</h3>
+                <ul>
+                    <li><strong>Inestabilidad Estructural:</strong> Inviable para sistemas comerciales que exijan mantener ordenaciones multi-criterio previas en registros duplicados.</li>
+                    <li><strong>Dependencia Matemática:</strong> Su optimización final se encuentra totalmente amarrada al patrón secuencial de brechas configurado en el bucle principal.</li>
+                </ul>
+            </div>
+            <div class="half-width" style="background: #f8f9fa; padding: 25px; border-radius: 8px;">
+                <h3 class="highlight">Recomendaciones de Implementación Profesional</h3>
+                <p><strong>¿Cuándo se recomienda su adopción?</strong><br>Altamente factible en proyectos de automatización, microcontroladores o sistemas IoT donde el consumo estricto de memoria RAM sea la máxima restricción operativa del desarrollo.</p>
+                <br>
+                <p><strong>¿Cuándo NO es conveniente su uso?</strong><br>Se descarta por completo en arquitecturas orientadas a Big Data o manejo de repositorios masivos indexados (donde algoritmos eficientes como *Merge Sort* o *Heap Sort* dominan en tiempo), o donde la consistencia de elementos duplicados sea una regla estricta del negocio.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="slide-container" id="slide10">
+        <div class="slide-header"><h1>I. Conclusiones y Lecciones del Proyecto</h1></div>
+        <div class="content full-width" style="flex-direction: column; gap:15px;">
+            <ul>
+                <li><strong>Aprendizaje del Grupo:</strong> Comprendimos conceptualmente de qué manera una sutil variación de lógica computacional (comparar elementos espaciados mediante saltos en lugar de examinar registros adyacentes continuos) puede transformar radicalmente la eficiencia temporal de ejecución de un programa informático.</li>
+                <li><strong>Principal Dificultad Encontrada:</strong> La mayor barrera de abstracción residió en efectuar el seguimiento manual minucioso de los punteros lógicos dinámicos que decrementan de forma simultánea en la prueba de escritorio.</li>
+                <li><strong>Resolución de Errores y Mitigaciones:</strong> Solucionamos los fallos potenciales de desbordamiento negativo de memoria (<span style="font-family: monospace;">IndexError</span>) restringiendo estrictamente el ciclo secundario con la condición posicional `posicion >= salto`. Asimismo, blindamos el software mediante una validación de retorno temprano para colecciones vacías o unitarias.</li>
+                <li><strong>Aspecto Más Relevante Evaluado:</strong> El núcleo técnico prioritario de la actividad fue dimensionar el impacto real que tiene el análisis, diseño y la selección del algoritmo idóneo frente a las capacidades e infraestructuras de hardware disponibles en un entorno de desarrollo profesional.</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="controls">
+        <button class="btn" onclick="prevSlide()">Anterior</button>
+        <button class="btn" onclick="nextSlide()">Siguiente</button>
+    </div>
+    <div class="slide-number" id="slideNum">Diapositiva 1 de 10</div>
+
+    <script>
+        let currentSlide = 1;
+        const totalSlides = 10;
+
+        function updatePresentation() {
+            document.querySelectorAll('.slide-container').forEach(slide => slide.classList.remove('active'));
+            document.getElementById('slide' + currentSlide).classList.add('active');
+            
+            // Actualizar barra de progreso
+            const progressPercent = ((currentSlide - 1) / (totalSlides - 1)) * 100;
+            document.getElementById('progress').style.width = progressPercent + '%';
+            
+            // Actualizar número de diapositiva
+            document.getElementById('slideNum').innerText = `Diapositiva ${currentSlide} de ${totalSlides}`;
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                currentSlide++;
+                updatePresentation();
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                currentSlide--;
+                updatePresentation();
+            }
+        }
+
+        // Permitir uso del teclado (Flechas)
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'ArrowRight') nextSlide();
+            if (e.key === 'ArrowLeft') prevSlide();
+        });
+    </script>
+</body>
+</html>
