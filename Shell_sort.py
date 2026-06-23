@@ -1,7 +1,7 @@
 def shell_sort(lista):
     """
     Ordena una lista utilizando el método Shell Sort.
-    Optimizado y robusto ante listas vacías o de un solo elemento.
+    Optimizado y robusto ante listas vacías, enteros y números decimales (flotantes).
     """
     largo = len(lista)
     
@@ -36,14 +36,14 @@ def shell_sort(lista):
 # BLOQUE DE EJECUCIÓN (Entrada por consola)
 # ==========================================
 # Solicitamos los datos al usuario en una sola línea separados por espacios
-entrada_usuario = input("Ingrese una lista de números separados por espacios: ")
+entrada_usuario = input("Ingrese una lista de números (pueden ser enteros o decimales con punto) separados por espacios: ")
 
-# Convertimos la entrada de texto en una lista de números enteros
-mi_lista = list(map(int, entrada_usuario.split()))
+# CAMBIO CLAVE: Usamos 'float' en lugar de 'int' para admitir decimales
+mi_lista = list(map(float, entrada_usuario.split()))
 
 print("\nArreglo original:", mi_lista)
 
 # Llamamos a la función y guardamos el resultado ordenado
 lista_ordenada = shell_sort(mi_lista)
 
-print("Arreglo ordenado:", lista_ordenada) 
+print("Arreglo ordenado:", lista_ordenada)
