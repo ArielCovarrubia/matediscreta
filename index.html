@@ -148,7 +148,7 @@
         <div class="content">
             <div class="half-width card">
                 <h3 class="highlight">Proceso Visual del Shell Sort (Pasada 1)</h3>
-                <p style="font-size:1rem; margin-bottom: 16px; color: var(--text-muted);">Tamaño original del arreglo $N = 9$ | Intervalo Inicial = $9 // 2 = 4$.</p>
+                <p style="font-size:1rem; margin-bottom: 16px; color: var(--text-muted);">Tamaño original del arreglo N = 9 | Intervalo Inicial = 9 // 2 = 4.</p>
                 <div style="background: #0b0f19; border: 1px solid var(--border-color); padding: 20px; border-radius: 10px; text-align: center;">
                     <p style="font-weight: 500; font-size: 0.95rem; margin-bottom: 5px;">Arreglo en Memoria:</p>
                     <table style="margin: 10px 0; font-size: 0.85rem;">
@@ -177,7 +177,7 @@
             <p style="color: var(--text-muted);">El comportamiento resolutivo del algoritmo se fundamenta en las siguientes certezas lógicas:</p>
             <ul style="margin-bottom: 10px;">
                 <li><strong>Garantía de Término:</strong> El ciclo principal evalúa de forma estricta la condición `salto > 0`. Como en cada iteración la brecha se recalcula mediante división entera (`salto //= 2`), el valor de la variable disminuye de forma monótona convergente hasta alcanzar inexorablemente el valor `0`, deteniendo el programa.</li>
-                <li><strong>Certeza del Ordenamiento:</strong> En su iteración final, el algoritmo opera con un `salto == 1`. Esto transforma la ejecución exactamente en un ordenamiento por inserción directa. Al haber aproximado previamente los elementos pesados a sus zonas correspondientes en pasadas con saltos mayores, la lista llega "casi ordenada", requiriendo un esfuerzo mínimo ($O(n)$) para finalizar ordenada al 100%.</li>
+                <li><strong>Certeza del Ordenamiento:</strong> En su iteración final, el algoritmo opera con un `salto == 1`. Esto transforma la ejecución exactamente en un ordenamiento por inserción directa. Al haber aproximado previamente los elementos pesados a sus zonas correspondientes en pasadas con saltos mayores, la lista llega "casi ordenada", requiriendo un esfuerzo mínimo (O(n)) para finalizar ordenada al 100%.</li>
             </ul>
             
             <h3 class="highlight">Análisis de Complejidad Temporal (Nivel Introductorio)</h3>
@@ -248,7 +248,7 @@
     <div class="slide-container" id="slide6">
         <div class="slide-header"><h1>E. Prueba de Escritorio Manual</h1></div>
         <div class="content full-width card" style="flex-direction: column; gap: 10px;">
-            <p style="color: var(--text-muted); margin-bottom: 5px;">Seguimiento detallado de variables en memoria utilizando una lista pequeña reglamentaria: <span style="color: var(--blue-primary); font-weight: 600;">`[12, 34, 5, 2]` ($n = 4$)</span>.</p>
+            <p style="color: var(--text-muted); margin-bottom: 5px;">Seguimiento detallado de variables en memoria utilizando una lista pequeña reglamentaria: <span style="color: var(--blue-primary); font-weight: 600;">`[12, 34, 5, 2]` (n = 4)</span>.</p>
             <table>
                 <tr>
                     <th>Paso Operativo</th>
@@ -325,7 +325,7 @@
         <div class="content">
             <div class="half-width card">
                 <h3 class="highlight">Manejo de Mutabilidad en Memoria</h3>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">El algoritmo opera bajo la propiedad <span style="color: var(--blue-primary);">In-place</span>. Esto significa que realiza las modificaciones de ordenamiento reestructurando directamente los índices dentro del espacio físico de la lista original pasada por referencia, con una complejidad espacial constante de $O(1)$, evitando duplicar el consumo de hardware.</p>
+                <p style="color: var(--text-muted); margin-bottom: 25px;">El algoritmo opera bajo la propiedad <span style="color: var(--blue-primary);">In-place</span>. Esto significa que realiza las modificaciones de ordenamiento reestructurando directamente los índices dentro del espacio físico de la lista original pasada por referencia, con una complejidad espacial constante de O(1), evitando duplicar el consumo de hardware.</p>
                 <h3 class="highlight">Estabilidad del Algoritmo</h3>
                 <p style="color: var(--text-muted);">Shell Sort se clasifica de forma estricta como un algoritmo <span style="color: #f87171; font-weight: 500;">INESTABLE</span>. Debido a que las comparaciones e intercambios se realizan saltando elementos distantes intermedios, si existen dos registros con idéntica clave de ordenamiento, no se garantiza que mantengan la misma prioridad relativa inicial en la salida.</p>
             </div>
