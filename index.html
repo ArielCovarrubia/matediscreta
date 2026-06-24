@@ -30,9 +30,10 @@
             display: none; 
             width: 100vw; 
             height: 100vh; 
-            padding: 50px 80px; 
+            padding: 40px 80px 100px 80px; /* Aumentado padding inferior para proteger los controles */
             position: relative;
             background: radial-gradient(circle at top right, #1e3a8a33, transparent);
+            overflow-y: auto; /* Permite scroll general si la pantalla es muy baja */
         }
         .slide-container.active { 
             display: flex; 
@@ -47,44 +48,53 @@
         }
         
         /* Indicadores de barra */
-        .top-bar { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--border-color); }
+        .top-bar { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--border-color); z-index: 100; }
         .top-bar-fill { height: 100%; background: var(--blue-primary); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         
-        .slide-header { border-left: 4px solid var(--blue-primary); padding-left: 20px; margin-bottom: 35px; }
-        .slide-header h1 { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.025em; color: var(--text-main); }
+        .slide-header { border-left: 4px solid var(--blue-primary); padding-left: 20px; margin-bottom: 25px; flex-shrink: 0; }
+        .slide-header h1 { font-size: 2.3rem; font-weight: 700; letter-spacing: -0.025em; color: var(--text-main); }
         
-        .content { flex: 1; display: flex; gap: 40px; font-size: 1.15rem; line-height: 1.6; }
+        .content { 
+            flex: 1; 
+            display: flex; 
+            gap: 30px; 
+            font-size: 1.05rem; 
+            line-height: 1.5; 
+            min-height: 0; /* Permite el correcto funcionamiento de scrolls internos */
+        }
         .full-width { width: 100%; }
-        .half-width { width: 50%; }
+        .half-width { width: 50%; display: flex; flex-direction: column; gap: 15px; }
         
         .card {
             background: var(--bg-card);
             border: 1px solid var(--border-color);
             border-radius: 12px;
-            padding: 30px;
+            padding: 24px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            overflow-y: auto; /* Evita que el contenido rompa la tarjeta */
         }
 
         /* Tablas Estilizadas */
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 0.95rem; background: var(--bg-card); border-radius: 8px; overflow: hidden; }
-        th, td { border: 1px solid var(--border-color); padding: 12px 16px; text-align: left; }
+        table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; background: var(--bg-card); border-radius: 8px; overflow: hidden; }
+        th, td { border: 1px solid var(--border-color); padding: 10px 14px; text-align: left; }
         th { background-color: #1e293b; color: var(--blue-primary); font-weight: 600; }
         tr:nth-child(even) td { background-color: #17255433; }
         
         /* Bloques de Código y Capturas */
-        pre { background: #0b0f19; color: #e2e8f0; padding: 24px; border-radius: 10px; border: 1px solid var(--border-color); font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.9rem; overflow-y: auto; height: 100%; line-height: 1.5; }
+        pre { background: #0b0f19; color: #e2e8f0; padding: 20px; border-radius: 10px; border: 1px solid var(--border-color); font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.85rem; overflow-y: auto; height: 100%; line-height: 1.4; }
         
         .image-container { 
-            margin-top: 12px; 
+            margin-top: 5px; 
             text-align: center; 
             background: #0b0f19; 
-            padding: 10px; 
+            padding: 8px; 
             border-radius: 10px; 
             border: 1px solid var(--border-color);
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 165px;
+            height: calc(50% - 30px);
+            min-height: 130px;
         }
         .image-container img {
             max-width: 100%;
@@ -92,33 +102,123 @@
             border-radius: 6px;
             object-fit: contain;
         }
+
+        /* Contenedor Integrado y Estilizado para el Diagrama de Flujo */
+        .flowchart-container {
+            text-align: center;
+            background: #0b1329;
+            padding: 15px;
+            border-radius: 12px;
+            border: 1px solid #1e3a8a;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.6);
+            position: relative;
+        }
+        .flowchart-container img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        .flowchart-container img:hover {
+            transform: scale(1.02);
+            box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+        }
+        .zoom-hint {
+            position: absolute;
+            bottom: 10px;
+            right: 15px;
+            font-size: 0.8rem;
+            color: var(--blue-primary);
+            opacity: 0.7;
+            pointer-events: none;
+            background: rgba(15, 23, 42, 0.6);
+            padding: 2px 8px;
+            border-radius: 4px;
+        }
+
+        /* Sistema de Modal Interactiva (Zoom Pantalla Completa) */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background-color: rgba(15, 23, 42, 0.95);
+            z-index: 2000;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .modal.open {
+            display: flex;
+            opacity: 1;
+        }
+        .modal-content {
+            max-width: 95%;
+            max-height: 90%;
+            object-fit: contain;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.7);
+            border-radius: 8px;
+            animation: modalZoom 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        @keyframes modalZoom {
+            from { transform: scale(0.8); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+        .close-modal {
+            position: absolute;
+            top: 25px;
+            right: 40px;
+            color: var(--text-main);
+            font-size: 2.5rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+            user-select: none;
+        }
+        .close-modal:hover {
+            color: var(--blue-primary);
+        }
         
-        /* Controles */
-        .controls { position: absolute; bottom: 30px; right: 80px; display: flex; gap: 12px; z-index: 100; }
+        /* Controles fijados correctamente abajo */
+        .controls { position: fixed; bottom: 25px; right: 80px; display: flex; gap: 12px; z-index: 100; }
         .btn { background: #1e293b; color: var(--text-main); border: 1px solid var(--border-color); padding: 10px 24px; font-size: 0.95rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .btn:hover { background: var(--blue-primary); color: var(--bg-main); border-color: var(--blue-primary); }
-        .slide-number { position: absolute; bottom: 35px; left: 80px; font-size: 0.95rem; color: var(--text-muted); font-weight: 500; }
+        .slide-number { position: fixed; bottom: 30px; left: 80px; font-size: 0.95rem; color: var(--text-muted); font-weight: 500; z-index: 100; }
         
         ul { margin-left: 20px; }
-        li { margin-bottom: 12px; color: var(--text-muted); }
+        li { margin-bottom: 8px; color: var(--text-muted); }
         li strong { color: var(--text-main); }
-        .highlight { color: var(--blue-primary); font-weight: 600; margin-bottom: 8px; }
+        .highlight { color: var(--blue-primary); font-weight: 600; margin-bottom: 6px; }
     </style>
 </head>
 <body>
 
     <div class="top-bar"><div class="top-bar-fill" id="progress"></div></div>
 
-    <div class="slide-container active" id="slide1" style="background: radial-gradient(circle at center, #1e3a8a44, transparent 60%);">
-        <div style="margin: auto; text-align: center; max-width: 900px;">
-            <h2 style="color: var(--blue-primary); letter-spacing: 0.15em; font-size: 1.2rem; font-weight: 600; margin-bottom: 16px;">ICINF1103 - ALGORITMOS Y ESTRUCTURA DE DATOS</h2>
-            <h1 style="font-size: 4.5rem; font-weight: 800; margin-bottom: 24px; color: var(--text-main); line-height: 1.1; letter-spacing: -0.03em;">Método de Ordenamiento:<br><span style="color: var(--blue-primary); background: linear-gradient(to right, #38bdf8, #818cf8); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Shell Sort</span></h1>
-            <div style="margin-top: 50px; border-top: 1px solid var(--border-color); padding-top: 24px; font-size: 1.15rem; color: var(--text-muted); display: flex; justify-content: center; gap: 60px;">
+    <div class="modal" id="imageModal" onclick="closeImage()">
+        <span class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImg" src="" alt="Diagrama Expandido">
+    </div>
+
+    <div class="slide-container active" id="slide1" style="background: radial-gradient(circle at center, #1e3a8a44, transparent 60%); justify-content: center;">
+        <div style="text-align: center; max-width: 900px; margin: 0 auto;">
+            <h2 style="color: var(--blue-primary); letter-spacing: 0.15em; font-size: 1.1rem; font-weight: 600; margin-bottom: 16px;">ICINF1103 - ALGORITMOS Y ESTRUCTURA DE DATOS</h2>
+            <h1 style="font-size: 4rem; font-weight: 800; margin-bottom: 24px; color: var(--text-main); line-height: 1.1; letter-spacing: -0.03em;">Método de Ordenamiento:<br><span style="color: var(--blue-primary); background: linear-gradient(to right, #38bdf8, #818cf8); background-clip: text; -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Shell Sort</span></h1>
+            <div style="margin-top: 40px; border-top: 1px solid var(--border-color); padding-top: 24px; font-size: 1.1rem; color: var(--text-muted); display: flex; justify-content: center; gap: 60px;">
                 <p><strong>Integrantes:</strong> A.Covarrubia L.Delgado</p>
                 <p><strong>Sección:</strong> 2026</p>
                 <p><strong>Fecha:</strong> Junio 2026</p>
             </div>
-            <p style="margin-top: 30px; font-size: 0.95rem; color: var(--text-muted); opacity: 0.7;">Universidad Católica de Temuco</p>
+            <p style="margin-top: 25px; font-size: 0.9rem; color: var(--text-muted); opacity: 0.7;">Universidad Católica de Temuco</p>
         </div>
     </div>
 
@@ -136,9 +236,9 @@
             </div>
             <div class="half-width card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
                 <h3 class="highlight">Objetivo del Método Shell Sort</h3>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">Optimizar el ordenamiento por inserción directa tradicional al permitir la comparación e intercambio de elementos que se encuentran en posiciones distantes, reduciendo drásticamente los desplazamientos necesarios.</p>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Optimizar el ordenamiento por inserción directa tradicional al permitir la comparación e intercambio de elementos que se encuentran en posiciones distantes, reduciendo drásticamente los desplazamientos necesarios.</p>
                 <h3 class="highlight">Situación Real de Aplicación</h3>
-                <p style="color: var(--text-muted);">Sistemas embebidos y dispositivos IoT (sensores de hardware empotrados) con memoria RAM extremadamente limitada que necesitan procesar y ordenar ráfagas de lecturas rápidas sin incurrir en desbordamientos de pila causados por recursión masiva.</p>
+                <p style="color: var(--text-muted);">Sistemas embebidos y dispositivos IoT con memoria RAM extremadamente limitada que necesitan procesar y ordenar ráfagas de lecturas rápidas sin incurrir en desbordamientos de pila causados por recursión masiva.</p>
             </div>
         </div>
     </div>
@@ -148,25 +248,22 @@
         <div class="content">
             <div class="half-width card">
                 <h3 class="highlight">Proceso Visual del Shell Sort (Pasada 1)</h3>
-                <p style="font-size:1rem; margin-bottom: 16px; color: var(--text-muted);">Tamaño original del arreglo N = 9 | Intervalo Inicial = 9 // 2 = 4.</p>
-                <div style="background: #0b0f19; border: 1px solid var(--border-color); padding: 20px; border-radius: 10px; text-align: center;">
-                    <p style="font-weight: 500; font-size: 0.95rem; margin-bottom: 5px;">Arreglo en Memoria:</p>
-                    <table style="margin: 10px 0; font-size: 0.85rem;">
-                        <tr style="background: #1e293b; color: var(--text-muted);"><td style="padding: 6px;">Índice</td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
+                <p style="font-size:0.95rem; margin-bottom: 12px; color: var(--text-muted);">Tamaño original del arreglo N = 9 | Intervalo Inicial = 9 // 2 = 4.</p>
+                <div style="background: #0b0f19; border: 1px solid var(--border-color); padding: 15px; border-radius: 10px; text-align: center;">
+                    <p style="font-weight: 500; font-size: 0.9rem; margin-bottom: 5px;">Arreglo en Memoria:</p>
+                    <table style="margin: 8px 0; font-size: 0.8rem;">
+                        <tr style="background: #1e293b; color: var(--text-muted);"><td style="padding: 5px;">Índice</td><td>0</td><td>1</td><td>2</td><td>3</td><td>4</td><td>5</td><td>6</td><td>7</td><td>8</td></tr>
                         <tr><td style="font-weight: bold; color: var(--blue-primary);">Valor</td><td style="background: #ef444422; color: #f87171;">2</td><td>4</td><td>5</td><td>6</td><td style="background: #ef444422; color: #f87171;">7</td><td>10</td><td>13</td><td>14</td><td>9</td></tr>
                     </table>
-                    <p style="font-size: 0.9rem; text-align: left; color: var(--text-muted); margin-top: 10px; line-height: 1.5;">💡 <strong>Mecánica:</strong> El algoritmo segmenta la lista en subgrupos virtuales separados por la distancia del <span style="color: var(--blue-primary);">salto</span>. Compara el índice `0` con el `4` (`2` vs `7`), luego el `1` con el `5` (`4` vs `10`), moviendo los valores mayores al extremo derecho rápido.</p>
+                    <p style="font-size: 0.85rem; text-align: left; color: var(--text-muted); margin-top: 8px; line-height: 1.4;">💡 <strong>Mecánica:</strong> El algoritmo segmenta la lista en subgrupos virtuales separados por la distancia del <span style="color: var(--blue-primary);">salto</span>. Compara el índice `0` con el `4` (`2` vs `7`), moviendo los valores mayores al extremo derecho rápido.</p>
                 </div>
             </div>
-            <div class="half-width card">
-                <h3 class="highlight">Estructura del Diagrama de Flujo</h3>
-                <p style="color: var(--text-muted); margin-bottom: 15px;">Para cumplir con los productos obligatorios, el diseño lógico se mapea de la Administrative de la siguiente manera reemplazando el pseudocódigo lineal:</p>
-                <ul>
-                    <li><strong>Inicio:</strong> Captura la estructura de datos entrante como parámetro.</li>
-                    <li><strong>Proceso Inicial:</strong> `largo = len(lista)`, `salto = largo // 2`.</li>
-                    <li><strong>Ciclo Principal (Mientras `salto > 0`):</strong> Controla la reducción de la brecha.</li>
-                    <li><strong>Ciclo Interno (Desde `salto` hasta `largo - 1`):</strong> Guarda el elemento evaluado en una variable temporal y efectúa las pasadas de comparación hacia atrás.</li>
-                </ul>
+            <div class="half-width card" style="padding: 15px;">
+                <h3 class="highlight">Representación Gráfica: Diagrama de Flujo</h3>
+                <div class="flowchart-container">
+                    <img id="flowchartImg" src="Blank diagram (2).png" alt="Diagrama de Flujo de Shell Sort" onclick="openImage(this.src)">
+                    <div class="zoom-hint">🔍 Haz clic para expandir</div>
+                </div>
             </div>
         </div>
     </div>
@@ -174,14 +271,14 @@
     <div class="slide-container" id="slide4">
         <div class="slide-header"><h1>C. Explicación Matemática y Resolutiva</h1></div>
         <div class="content full-width card" style="flex-direction: column; gap: 15px;">
-            <p style="color: var(--text-muted);">El comportamiento resolutivo del algoritmo se fundamenta en las siguientes certezas lógicas:</p>
-            <ul style="margin-bottom: 10px;">
-                <li><strong>Garantía de Término:</strong> El ciclo principal evalúa de forma estricta la condición `salto > 0`. Como en cada iteración la brecha se recalcula mediante división entera (`salto //= 2`), el valor de la variable disminuye de forma monótona convergente hasta alcanzar inexorablemente el valor `0`, deteniendo el programa.</li>
-                <li><strong>Certeza del Ordenamiento:</strong> En su iteración final, el algoritmo opera con un `salto == 1`. Esto transforma la ejecución exactamente en un ordenamiento por inserción directa. Al haber aproximado previamente los elementos pesados a sus zonas correspondientes en pasadas con saltos mayores, la lista llega "casi ordenada", requiriendo un esfuerzo mínimo (O(n)) para finalizar ordenada al 100%.</li>
+            <p style="color: var(--text-muted); font-size: 0.95rem;">El comportamiento resolutivo del algoritmo se fundamenta en las siguientes certezas lógicas:</p>
+            <ul style="margin-bottom: 5px; font-size: 0.95rem;">
+                <li><strong>Garantía de Término:</strong> El ciclo principal evalúa de forma estricta la condición `salto > 0`. Como la brecha se recalcula mediante división entera (`salto //= 2`), disminuye de forma monótona convergente hasta alcanzar el valor `0`, deteniendo el programa.</li>
+                <li><strong>Certeza del Ordenamiento:</strong> En su iteración final, opera con un `salto == 1` (inserción directa). Al haber aproximado previamente los elementos pesados a sus zonas en pasadas anteriores, la lista requiere un esfuerzo mínimo para finalizar ordenada al 100%.</li>
             </ul>
             
-            <h3 class="highlight">Análisis de Complejidad Temporal (Nivel Introductorio)</h3>
-            <table>
+            <h3 class="highlight" style="margin-top: 5px;">Análisis de Complejidad Temporal (Nivel Introductorio)</h3>
+            <table style="margin-top: 5px;">
                 <tr>
                     <th style="width: 20%;">Escenario Técnico</th>
                     <th style="width: 25%;">Complejidad Formal</th>
@@ -189,18 +286,18 @@
                 </tr>
                 <tr>
                     <td><strong>Mejor Caso</strong></td>
-                    <td style="color: #4ade80; font-family: monospace; font-size: 1rem;">&Omega;(n log n)</td>
-                    <td style="color: var(--text-muted);">La lista ya se encuentra ordenada. Realiza las comparaciones de brecha obligatorias pero efectúa cero intercambios moleculares en memoria.</td>
+                    <td style="color: #4ade80; font-family: monospace; font-size: 0.95rem;">&Omega;(n log n)</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">La lista ya se encuentra ordenada. Realiza las comparaciones de brecha obligatorias pero efectúa cero intercambios en memoria.</td>
                 </tr>
                 <tr>
                     <td><strong>Caso Promedio</strong></td>
-                    <td style="color: var(--blue-primary); font-family: monospace; font-size: 1rem;">O(n<sup>1.5</sup>)</td>
-                    <td style="color: var(--text-muted);">Depende intrínsecamente de la secuencia de brechas escogida. La reducción sucesiva por la mitad ofrece un rendimiento balanceado y eficiente en colecciones intermedias.</td>
+                    <td style="color: var(--blue-primary); font-family: monospace; font-size: 0.95rem;">O(n<sup>1.5</sup>)</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">Depende de la secuencia de brechas escogida. La reducción sucesiva por la mitad ofrece un rendimiento balanceado y eficiente.</td>
                 </tr>
                 <tr>
                     <td><strong>Peor Caso</strong></td>
-                    <td style="color: #f87171; font-family: monospace; font-size: 1rem;">O(n<sup>2</sup>)</td>
-                    <td style="color: var(--text-muted);">Ocurre cuando los elementos mayores se encuentran intercalados de forma simétrica con los menores, forzando desplazamientos máximos.</td>
+                    <td style="color: #f87171; font-family: monospace; font-size: 0.95rem;">O(n<sup>2</sup>)</td>
+                    <td style="color: var(--text-muted); font-size: 0.85rem;">Ocurre cuando los elementos mayores se encuentran intercalados de forma simétrica, forzando desplazamientos máximos.</td>
                 </tr>
             </table>
         </div>
@@ -229,17 +326,17 @@
                 posicion -= salto
                 
             lista[posicion] = valor_temporal
-        salto //= 2  # Reducción estricta de la brecha
+        salto //= 2  # Reducción de la brecha
     return lista
 </code></pre>
             </div>
             <div class="half-width card">
                 <h3 class="highlight">Puntos Críticos de la Implementación</h3>
-                <ul>
-                    <li><strong>Uso Estricto de Funciones:</strong> Recibe la colección directamente como parámetro y efectúa un <span style="color: var(--blue-primary);">retorno</span> limpio de la estructura procesada.</li>
-                    <li><strong>Prohibición de Métodos Nativos:</strong> No se utiliza `sort()` ni `sorted()`, garantizando el desarrollo manual puro requerido por la rúbrica.</li>
-                    <li><strong>Variables Comprensibles:</strong> Se reemplazan nomenclaturas ambiguas (`gap`, `temp`, `j`) por términos explícitos en español (`salto`, `valor_temporal`, `posicion`) para asegurar los puntos de legibilidad.</li>
-                    <li><strong>Manejo Óptimo de Memoria:</strong> Opera de forma <em>In-place</em> modificando los índices internos existentes sin duplicar colecciones.</li>
+                <ul style="font-size: 0.95rem;">
+                    <li><strong>Uso Estricto de Funciones:</strong> Recibe la colección directamente como parámetro y efectúa un `return` limpio.</li>
+                    <li><strong>Prohibición de Métodos Nativos:</strong> No se utiliza `sort()` ni `sorted()`, garantizando el desarrollo manual puro.</li>
+                    <li><strong>Variables Comprensibles:</strong> Se reemplazan nomenclaturas ambiguas por términos explícitos en español (`salto`, `valor_temporal`, `posicion`).</li>
+                    <li><strong>Manejo Óptimo de Memoria:</strong> Opera de forma <em>In-place</em> modificando los índices internos existentes.</li>
                 </ul>
             </div>
         </div>
@@ -247,34 +344,34 @@
 
     <div class="slide-container" id="slide6">
         <div class="slide-header"><h1>E. Prueba de Escritorio Manual</h1></div>
-        <div class="content full-width card" style="flex-direction: column; gap: 10px;">
-            <p style="color: var(--text-muted); margin-bottom: 5px;">Seguimiento detallado de variables en memoria utilizando una lista pequeña reglamentaria: <span style="color: var(--blue-primary); font-weight: 600;">`[12, 34, 5, 2]` (n = 4)</span>.</p>
+        <div class="content full-width card" style="flex-direction: column;">
+            <p style="color: var(--text-muted); margin-bottom: 8px; font-size: 0.95rem;">Seguimiento detallado de variables utilizando una lista pequeña reglamentaria: <span style="color: var(--blue-primary); font-weight: 600;">`[12, 34, 5, 2]` (n = 4)</span>.</p>
             <table>
                 <tr>
                     <th>Paso Operativo</th>
-                    <th>Salto Actual</th>
-                    <th>Índices Evaluados</th>
+                    <th>Salto</th>
+                    <th>Índices</th>
                     <th>Comparación Condicional</th>
-                    <th>¿Se ejecuta Intercambio?</th>
+                    <th>¿Intercambio?</th>
                     <th>Estado de la Lista en Memoria</th>
                 </tr>
                 <tr style="font-weight: 500; background: #0b0f19;">
                     <td>Inicio</td><td>-</td><td>-</td><td>-</td><td>-</td><td style="color: var(--text-muted);">`[12, 34, 5, 2]`</td>
                 </tr>
                 <tr>
-                    <td><strong>Paso 1</strong></td><td>2</td><td>`0` y `2`</td><td>`lista[0] > lista[2]` (¿`12 > 5`?)</td><td style="color: #4ade80; font-weight: bold;">SÍ</td><td>`[5, 34, 12, 2]`</td>
+                    <td><strong>Paso 1</strong></td><td>2</td><td>`0` y `2`</td><td>¿`12 > 5`?</td><td style="color: #4ade80; font-weight: bold;">SÍ</td><td>`[5, 34, 12, 2]`</td>
                 </tr>
                 <tr>
-                    <td><strong>Paso 2</strong></td><td>2</td><td>`1` y `3`</td><td>`lista[1] > lista[3]` (¿`34 > 2`?)</td><td style="color: #4ade80; font-weight: bold;">SÍ</td><td>`[5, 2, 12, 34]`</td>
+                    <td><strong>Paso 2</strong></td><td>2</td><td>`1` y `3`</td><td>¿`34 > 2`?</td><td style="color: #4ade80; font-weight: bold;">SÍ</td><td>`[5, 2, 12, 34]`</td>
                 </tr>
                 <tr>
-                    <td><strong>Paso 3</strong></td><td>1</td><td>`0` y `1`</td><td>`lista[0] > lista[1]` (¿`5 > 2`?)</td><td style="color: #4ade80; font-weight: bold;">SÍ</td><td>`[2, 5, 12, 34]`</td>
+                    <td><strong>Paso 3</strong></td><td>1</td><td>`0` y `1`</td><td>¿`5 > 2`?</td><td style="color: #4ade80; font-weight: bold;">SÍ</td><td>`[2, 5, 12, 34]`</td>
                 </tr>
                 <tr>
-                    <td><strong>Paso 4</strong></td><td>1</td><td>`1` y `2`</td><td>`lista[1] > lista[2]` (¿`5 > 12`?)</td><td style="color: #f87171;">NO</td><td>`[2, 5, 12, 34]`</td>
+                    <td><strong>Paso 4</strong></td><td>1</td><td>`1` y `2`</td><td>¿`5 > 12`?</td><td style="color: #f87171;">NO</td><td>`[2, 5, 12, 34]`</td>
                 </tr>
                 <tr>
-                    <td><strong>Paso 5</strong></td><td>1</td><td>`2` y `3`</td><td>`lista[2] > lista[3]` (¿`12 > 34`?)</td><td style="color: #f87171;">NO</td><td>`[2, 5, 12, 34]` <span style="color: #4ade80; font-weight: 500;">(¡Ordenada!)</span></td>
+                    <td><strong>Paso 5</strong></td><td>1</td><td>`2` y `3`</td><td>¿`12 > 34`?</td><td style="color: #f87171;">NO</td><td>`[2, 5, 12, 34]` <span style="color: #4ade80; font-weight: 500;">(¡Ordenada!)</span></td>
                 </tr>
             </table>
         </div>
@@ -283,37 +380,37 @@
     <div class="slide-container" id="slide7">
         <div class="slide-header"><h1>F. Verificación de Casos de Prueba</h1></div>
         <div class="content">
-            <div class="half-width card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 20px 25px;">
+            <div class="half-width card" style="padding: 15px 20px;">
                 <div>
-                    <h4 class="highlight">1. Lista Inversa y Desordenada</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Evaluación de entrada descendente extrema: [9, 7, 5, 3, 1] &rarr; [1, 3, 5, 7, 9].</p>
+                    <h4 class="highlight" style="font-size: 1rem;">1. Lista Inversa y Desordenada</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2px;">Entrada descendente extrema: [9, 7, 5, 3, 1] &rarr; [1, 3, 5, 7, 9].</p>
                     <div class="image-container">
-                        <img src="Inversa.png" alt="Caso de Prueba Lista Inversa">
+                        <img src="Inversa.png" alt="Caso de Prueba Lista Inversa" style="cursor:pointer;" onclick="openImage(this.src)">
                     </div>
                 </div>
                 
-                <div style="margin-top: 15px;">
-                    <h4 class="highlight">2. Lista con Elementos Repetidos</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Comportamiento ante claves duplicadas: [4, 2, 4, 1, 2] &rarr; [1, 2, 2, 4, 4].</p>
+                <div style="margin-top: 10px;">
+                    <h4 class="highlight" style="font-size: 1rem;">2. Lista con Elementos Repetidos</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2px;">Claves duplicadas: [4, 2, 4, 1, 2] &rarr; [1, 2, 2, 4, 4].</p>
                     <div class="image-container">
-                        <img src="Elementos repetidos.png" alt="Caso de Prueba Elementos Repetidos">
+                        <img src="Elementos repetidos.png" alt="Caso de Prueba Elementos Repetidos" style="cursor:pointer;" onclick="openImage(this.src)">
                     </div>
                 </div>
             </div>
-            <div class="half-width card" style="display: flex; flex-direction: column; justify-content: space-between; padding: 20px 25px;">
+            <div class="half-width card" style="padding: 15px 20px;">
                 <div>
-                    <h4 class="highlight">3. Lista con Valores Negativos</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Comprobación bajo el cero relativo: [-5, 10, 0, -2] &rarr; [-5, -2, 0, 10].</p>
+                    <h4 class="highlight" style="font-size: 1rem;">3. Lista con Valores Negativos</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2px;">Bajo el cero relativo: [-5, 10, 0, -2] &rarr; [-5, -2, 0, 10].</p>
                     <div class="image-container">
-                        <img src="Valores negativos.png" alt="Caso de Prueba Valores Negativos">
+                        <img src="Valores negativos.png" alt="Caso de Prueba Valores Negativos" style="cursor:pointer;" onclick="openImage(this.src)">
                     </div>
                 </div>
                 
-                <div style="margin-top: 15px;">
-                    <h4 class="highlight">4. Lista Vacía o Unitaria</h4>
-                    <p style="font-size: 0.9rem; color: var(--text-muted);">Estructura al límite de datos: [] &rarr; [] (Retorno limpio e inmediato).</p>
+                <div style="margin-top: 10px;">
+                    <h4 class="highlight" style="font-size: 1rem;">4. Lista Vacía o Unitaria</h4>
+                    <p style="font-size: 0.85rem; color: var(--text-muted); margin-bottom: 2px;">Límite de datos: [] &rarr; [] (Retorno limpio).</p>
                     <div class="image-container">
-                        <img src="Vacio.png" alt="Caso de Prueba Lista Vacía">
+                        <img src="Vacio.png" alt="Caso de Prueba Lista Vacía" style="cursor:pointer;" onclick="openImage(this.src)">
                     </div>
                 </div>
             </div>
@@ -325,14 +422,14 @@
         <div class="content">
             <div class="half-width card">
                 <h3 class="highlight">Manejo de Mutabilidad en Memoria</h3>
-                <p style="color: var(--text-muted); margin-bottom: 25px;">El algoritmo opera bajo la propiedad <span style="color: var(--blue-primary);">In-place</span>. Esto significa que realiza las modificaciones de ordenamiento reestructurando directamente los índices dentro del espacio físico de la lista original pasada por referencia, con una complejidad espacial constante de O(1), evitando duplicar el consumo de hardware.</p>
+                <p style="color: var(--text-muted); margin-bottom: 15px; font-size: 0.95rem;">El algoritmo opera bajo la propiedad <span>In-place</span>. Modifica los índices dentro del espacio físico de la lista original pasada por referencia, con una complejidad espacial constante de O(1), evitando duplicar el consumo de hardware.</p>
                 <h3 class="highlight">Estabilidad del Algoritmo</h3>
-                <p style="color: var(--text-muted);">Shell Sort se clasifica de forma estricta como un algoritmo <span style="color: #f87171; font-weight: 500;">INESTABLE</span>. Debido a que las comparaciones e intercambios se realizan saltando elementos distantes intermedios, si existen dos registros con idéntica clave de ordenamiento, no se garantiza que mantengan la misma prioridad relativa inicial en la salida.</p>
+                <p style="color: var(--text-muted); font-size: 0.95rem;">Shell Sort se clasifica como un algoritmo <span style="color: #f87171; font-weight: 500;">INESTABLE</span>. Debido a los saltos distantes intermedios, si existen dos registros con idéntica clave, no se garantiza que mantengan su prioridad relativa inicial.</p>
             </div>
             <div class="half-width card" style="background: var(--danger-bg); border-color: var(--danger-border);">
-                <h3 style="color: var(--danger-text); margin-bottom: 12px; font-weight: 600;">Detección de Errores y Limitaciones de Python</h3>
-                <p style="color: #fed7aa; font-size: 1.1rem; margin-bottom: 15px;">El script implementa de forma robusta la ordenación de tipos de datos puros homólogos (cadenas de texto o números).</p>
-                <p style="color: #fcd34d; line-height: 1.5;"><strong>Falla Crítica por Tipos Mezclados:</strong> Si la entrada suministrada contiene colecciones mixtas heterogéneas, como por ejemplo `[3, "Informatica", -1]`, el intérprete de Python detendrá la ejecución abruptamente lanzando un error del tipo <span style="font-family: monospace; font-weight: bold; background: #00000044; padding: 2px 6px; border-radius: 4px;">TypeError</span>. Esto ocurre debido a que las restricciones de seguridad internas del lenguaje prohíben de forma nativa la evaluación relacional lógica del operador "mayor que" (`>`) entre instancias numéricas y cadenas.</p>
+                <h3 style="color: var(--danger-text); margin-bottom: 8px; font-weight: 600;">Detección de Errores y Limitaciones de Python</h3>
+                <p style="color: #fed7aa; font-size: 1rem; margin-bottom: 10px;">El script implementa la ordenación de tipos de datos puros homólogos (cadenas de texto o números).</p>
+                <p style="color: #fcd34d; line-height: 1.4; font-size: 0.95rem;"><strong>Falla Crítica por Tipos Mezclados:</strong> Si la entrada contiene colecciones mixtas heterogéneas, ej: `[3, "Informatica", -1]`, el intérprete lanzará un error del tipo <span>TypeError</span>. Esto ocurre porque las restricciones internas prohíben la evaluación relacional lógica del operador `>` entre instancias numéricas y cadenas.</p>
             </div>
         </div>
     </div>
@@ -342,32 +439,32 @@
         <div class="content">
             <div class="half-width card">
                 <h3 class="highlight">Ventajas Principales</h3>
-                <ul style="margin-bottom: 25px;">
-                    <li><strong>Eficiencia de Recursos:</strong> No requiere asignación de estructuras auxiliares de datos adicionales en el sistema.</li>
-                    <li><strong>Rendimiento Evolucionado:</strong> Desplaza de forma ágil los elementos pesados, superando sustancialmente la lentitud cuadrática del método Burbuja (*Bubble Sort*) clásico.</li>
+                <ul style="margin-bottom: 15px; font-size: 0.95rem;">
+                    <li><strong>Eficiencia de Recursos:</strong> No requiere asignación de estructuras auxiliares adicionales.</li>
+                    <li><strong>Rendimiento Evolucionado:</strong> Desplaza ágilmente elementos pesados, superando la lentitud cuadrática del método Burbuja básico.</li>
                 </ul>
                 <h3 class="highlight">Limitaciones Técnicas</h3>
-                <ul>
-                    <li><strong>Inestabilidad Estructural:</strong> Inviable para sistemas comerciales que exijan mantener ordenaciones multi-criterio previas en registros duplicados.</li>
-                    <li><strong>Dependencia Matemática:</strong> Su optimización final se encuentra totalmente amarrada al patrón secuencial de brechas configurado en el bucle principal.</li>
+                <ul style="font-size: 0.95rem;">
+                    <li><strong>Inestabilidad Estructural:</strong> Inviable para sistemas que exijan mantener ordenaciones multi-criterio en registros duplicados.</li>
+                    <li><strong>Dependencia Matemática:</strong> Su optimización final depende plenamente del patrón secuencial de brechas configurado.</li>
                 </ul>
             </div>
             <div class="half-width card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
-                <h3 class="highlight">Recomendaciones de Implementación Profesional</h3>
-                <p style="margin-bottom: 20px;"><strong>¿Cuándo se recomienda su adopción?</strong><br><span style="color: var(--text-muted);">Altamente factible en proyectos de automatización, microcontroladores o sistemas IoT donde el consumo estricto de memoria RAM sea la máxima restricción operativa del desarrollo.</span></p>
-                <p><strong>¿Cuándo NO es conveniente su uso?</strong><br><span style="color: var(--text-muted);">Se descarta por completo en arquitecturas orientadas a Big Data o manejo de repositorios masivos indexados (donde algoritmos eficientes como *Merge Sort* o *Heap Sort* dominan en tiempo), o donde la consistencia de elementos duplicados sea una regla estricta del negocio.</span></p>
+                <h3 class="highlight">Recomendaciones de Implementación</h3>
+                <p style="margin-bottom: 15px; font-size: 0.95rem;"><strong>¿Cuándo se recomienda?</strong><br><span style="color: var(--text-muted);">En proyectos de automatización, microcontroladores o sistemas IoT con restricciones estrictas de memoria RAM.</span></p>
+                <p style="font-size: 0.95rem;"><strong>¿Cuándo NO es conveniente?</strong><br><span style="color: var(--text-muted);">Se descarta en Big Data o repositorios masivos indexados (donde dominan *Merge Sort* o *Heap Sort*), o donde la consistencia de elementos duplicados sea una regla estricta.</span></p>
             </div>
         </div>
     </div>
 
     <div class="slide-container" id="slide10">
         <div class="slide-header"><h1>I. Conclusiones y Lecciones del Proyecto</h1></div>
-        <div class="content full-width card" style="flex-direction: column; gap: 15px; background: radial-gradient(circle at bottom right, #1e3a8a22, transparent);">
+        <div class="content full-width card" style="flex-direction: column; gap: 10px; background: radial-gradient(circle at bottom right, #1e3a8a22, transparent); font-size: 0.95rem;">
             <ul>
-                <li><strong>Aprendizaje del Grupo:</strong> Comprendimos conceptualmente de qué manera una sutil variación de lógica computacional (comparar elementos espaciados mediante saltos en lugar de examinar registros adyacentes continuos) puede transformar radicalmente la eficiencia temporal de ejecución de un programa informático.</li>
-                <li><strong>Principal Dificultad Encontrada:</strong> La mayor barrera de abstracción residió en efectuar el seguimiento manual minucioso de los punteros lógicos dinámicos que decrementan de forma simultánea en la prueba de escritorio.</li>
-                <li><strong>Resolución de Errores y Mitigaciones:</strong> Solucionamos los fallos potenciales de desbordamiento de memoria (`IndexError`) restringiendo estrictamente el ciclo secundario con la condición posicional `posicion >= salto`. Asimismo, blindamos el software mediante una validación de retorno temprano para colecciones vacías o unitarias.</li>
-                <li><strong>Aspecto Más Relevante Evaluado:</strong> El núcleo técnico prioritario de la actividad fue dimensionar el impacto real que tiene el análisis, diseño y la selección del algoritmo idóneo frente a las capacidades e infraestructuras de hardware disponibles en un entorno de desarrollo profesional.</li>
+                <li><strong>Aprendizaje del Grupo:</strong> Comprendimos cómo una variación lógica (comparar elementos espaciados mediante saltos) transforma radicalmente la eficiencia computacional de un programa.</li>
+                <li><strong>Principal Dificultad Encontrada:</strong> La mayor barrera de abstracción residió en efectuar el seguimiento manual minucioso de los punteros lógicos dinámicos que decrementan simultáneamente en la prueba de escritorio.</li>
+                <li><strong>Resolución de Errores y Mitigaciones:</strong> Solucionamos los fallos potenciales de desbordamiento de memoria (`IndexError`) restringiendo estrictamente el ciclo secundario con la condición `posicion >= salto`, y blindamos el software con un retorno temprano para colecciones vacías o unitarias.</li>
+                <li><strong>Aspecto Más Relevante Evaluado:</strong> El núcleo técnico prioritario fue dimensionar el impacto real de la selección del algoritmo idóneo frente a las capacidades e infraestructuras de hardware disponibles.</li>
             </ul>
         </div>
     </div>
@@ -408,10 +505,28 @@
             }
         }
 
-        // Permitir uso del teclado (Flechas)
+        // Sistema Interactivo de Zoom para las imágenes
+        function openImage(imgSrc) {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImg');
+            modalImg.src = imgSrc;
+            modal.classList.add('open');
+        }
+
+        function closeImage() {
+            const modal = document.getElementById('imageModal');
+            modal.classList.remove('open');
+        }
+
+        // Permitir uso del teclado (Flechas y Escape)
         document.addEventListener('keydown', function(e) {
-            if (e.key === 'ArrowRight') nextSlide();
-            if (e.key === 'ArrowLeft') prevSlide();
+            if (e.key === 'Escape') closeImage();
+            
+            // Solo navegar por diapositivas si el visor de imagen está cerrado
+            if (!document.getElementById('imageModal').classList.contains('open')) {
+                if (e.key === 'ArrowRight') nextSlide();
+                if (e.key === 'ArrowLeft') prevSlide();
+            }
         });
     </script>
 </body>
