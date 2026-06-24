@@ -19,7 +19,8 @@ def shell_sort(lista):
             
         salto //= 2
         
-    return lista
+    lista_limpia = [int(x) if x.is_integer() else x for x in lista]
+    return lista_limpia
 
 entrada_usuario = input("Ingrese una lista de números (pueden ser enteros o decimales con punto) separados por espacios: ")
 mi_lista = list(map(float, entrada_usuario.split()))
