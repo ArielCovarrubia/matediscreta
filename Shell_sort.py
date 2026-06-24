@@ -19,11 +19,24 @@ def shell_sort(lista):
             
         salto //= 2
         
-    lista_limpia = [int(x) if x.is_integer() else x for x in lista]
-    return lista_limpia
+    if len(lista) > 0 and isinstance(lista[0], (int, float)):
+        lista_limpia = [int(x) if hasattr(x, 'is_integer') and x.is_integer() else x for x in lista]
+        return lista_limpia
+        
+    return lista
 
-entrada_usuario = input("Ingrese una lista de números (pueden ser enteros o decimales con punto) separados por espacios: ")
-mi_lista = list(map(float, entrada_usuario.split()))
+entrada_usuario = input("Ingrese una lista (pueden ser números enteros, decimales o palabras) separados por espacios: ")
+elementos = entrada_usuario.split()
+
+mi_lista = []
+
+if elementos:
+    try:
+        mi_lista = [float(x) for x in elementos]
+    except ValueError:
+        mi_lista = elementos
+else:
+    mi_lista = []
 
 print("\nArreglo original:", mi_lista)
 lista_ordenada = shell_sort(mi_lista)
