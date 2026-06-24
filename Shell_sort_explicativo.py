@@ -1,52 +1,64 @@
-# Define la función principal que recibe la lista a ordenar como argumento
+# 1. Definimos la función llamada 'shell_sort' que recibe como parámetro 'lista'
 def shell_sort(lista):
-    # Obtiene la cantidad total de elementos dentro de la lista y la guarda en 'largo'
+    # 2. Calculamos cuántos elementos tiene la lista y lo guardamos en 'largo'
     largo = len(lista)
     
-    # Si la lista no tiene elementos o solo tiene uno, ya está ordenada, así que la devuelve de inmediato
+    # 3. Si la lista tiene 0 o 1 elemento, ya está ordenada, así que la devuelve de inmediato
     if largo <= 1:
         return lista
         
-    # Calcula el primer "salto" (gap) dividiendo el largo de la lista por 2 usando división entera
+    # 4. Calculamos el 'salto' inicial (la brecha o gap) usando división entera (// 2)
+    # Por ejemplo, si la lista tiene 6 elementos, el primer salto será de 3
     salto = largo // 2
     
-    # Comienza un ciclo que se ejecutará mientras el tamaño del salto sea mayor a 0
+    # 5. El bucle principal continuará mientras el salto sea mayor que cero (sea 1 o más)
     while salto > 0:
-        # Recorre la lista desde la posición del 'salto' actual hasta el final del arreglo
+        
+        # 6. Recorremos la lista desde la posición del 'salto' hasta el final ('largo')
+        # Esto nos permite comparar elementos separados por la distancia del 'salto'
         for i in range(salto, largo):
-            # Guarda temporalmente el valor actual que vamos a comparar y reubicar
+            
+            # 7. Guardamos el valor actual en una variable temporal para no perderlo al mover otros números
             valor_temporal = lista[i]
-            # Registra la posición actual del elemento que estamos evaluando
+            
+            # 8. Registramos la posición actual del elemento que estamos evaluando
             posicion = i
             
-            # Ciclo que compara el valor actual con los elementos que están a una distancia de "salto" hacia atrás
-            # Se detiene si llegamos al inicio del salto o si el elemento anterior ya es menor o igual
+            # 9. Bucle de ordenamiento por inserción: compara el elemento actual con el que está un 'salto' hacia atrás.
+            # Se repite si no nos salimos del inicio de la lista (posicion >= salto) 
+            # y si el elemento de atrás es mayor que nuestro 'valor_temporal'
             while posicion >= salto and lista[posicion - salto] > valor_temporal:
-                # Copia el elemento más grande (el que está atrás) hacia la posición de adelante
+                
+                # 10. Como el de atrás es mayor, movemos ese elemento hacia adelante ocupando el lugar actual
                 lista[posicion] = lista[posicion - salto]
-                # Mueve el índice hacia atrás (la distancia del salto) para seguir verificando
+                
+                # 11. Retrocedemos la posición según el 'salto' para verificar si el elemento de más atrás también es mayor
                 posicion -= salto
                 
-            # Coloca el valor que teníamos guardado temporalmente en su posición correcta final
+            # 12. Cuando encontramos el lugar correcto (donde el de atrás ya no es mayor), colocamos el 'valor_temporal' ahí
             lista[posicion] = valor_temporal
             
-        # Reduce el tamaño del salto a la mitad para la siguiente fase del algoritmo (división entera)
+        # 13. Reducimos el salto a la mitad para la siguiente ronda de comparaciones más cercanas
         salto //= 2
         
-    # Devuelve la lista completamente ordenada una vez que el salto llega a 0
-    return lista
+    # 14. OPCEÓN CORREGIDA: Recorremos la lista ya ordenada con una lista de comprensión.
+    # Si un número termina en .0 (es entero flotante), lo convierte a 'int' puro; si tiene decimales reales, lo deja como 'float'.
+    lista_limpia = [int(x) if x.is_integer() else x for x in lista]
+    
+    # 15. Devolvemos la nueva lista limpia y sin ceros estéticos al final
+    return lista_limpia
 
-# Muestra un mensaje en consola pidiendo al usuario que ingrese los números separados por espacios
+# 16. Pedimos al usuario que ingrese los números separados por un espacio en blanco
 entrada_usuario = input("Ingrese una lista de números (pueden ser enteros o decimales con punto) separados por espacios: ")
 
-# Toma el texto del usuario, lo divide por cada espacio, convierte cada fragmento a flotante (decimal) y lo transforma en una lista
+# 17. Tomamos el texto ingresado, lo separamos por espacios (.split()) y convertimos cada dato a float usando map()
 mi_lista = list(map(float, entrada_usuario.split()))
 
-# Imprime en pantalla la lista original tal como la ingresó el usuario
+# 18. Imprimimos en pantalla la lista original tal como la ingresó el usuario (convertida a float)
 print("\nArreglo original:", mi_lista)
 
-# Ejecuta la función shell_sort pasando la lista creada y almacena el resultado final
+# 19. Llamamos a nuestra función pasando 'mi_lista' y guardamos el resultado limpio en 'lista_ordenada'
 lista_ordenada = shell_sort(mi_lista)
 
-# Imprime en la consola el resultado final con la lista ya ordenada de menor a mayor
+# 20. Imprimimos el resultado final ordenado y formateado estéticamente
 print("Arreglo ordenado:", lista_ordenada)
