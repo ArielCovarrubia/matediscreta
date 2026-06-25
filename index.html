@@ -30,10 +30,10 @@
             display: none; 
             width: 100vw; 
             height: 100vh; 
-            padding: 40px 80px 100px 80px; /* Aumentado padding inferior para proteger los controles */
+            padding: 40px 80px 100px 80px; 
             position: relative;
             background: radial-gradient(circle at top right, #1e3a8a33, transparent);
-            overflow-y: auto; /* Permite scroll general si la pantalla es muy baja */
+            overflow-y: auto; 
         }
         .slide-container.active { 
             display: flex; 
@@ -47,7 +47,6 @@
             to { opacity: 1; transform: translateY(0); }
         }
         
-        /* Indicadores de barra */
         .top-bar { position: absolute; top: 0; left: 0; width: 100%; height: 6px; background: var(--border-color); z-index: 100; }
         .top-bar-fill { height: 100%; background: var(--blue-primary); transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
         
@@ -60,7 +59,7 @@
             gap: 30px; 
             font-size: 1.05rem; 
             line-height: 1.5; 
-            min-height: 0; /* Permite el correcto funcionamiento de scrolls internos */
+            min-height: 0; 
         }
         .full-width { width: 100%; }
         .half-width { width: 50%; display: flex; flex-direction: column; gap: 15px; }
@@ -71,17 +70,19 @@
             border-radius: 12px;
             padding: 24px;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            overflow-y: auto; /* Evita que el contenido rompa la tarjeta */
+            overflow-y: auto; 
         }
 
-        /* Tablas Estilizadas */
         table { width: 100%; border-collapse: collapse; margin-top: 10px; font-size: 0.9rem; background: var(--bg-card); border-radius: 8px; overflow: hidden; }
         th, td { border: 1px solid var(--border-color); padding: 10px 14px; text-align: left; }
         th { background-color: #1e293b; color: var(--blue-primary); font-weight: 600; }
         tr:nth-child(even) td { background-color: #17255433; }
         
-        /* Bloques de Código y Capturas */
-        pre { background: #0b0f19; color: #e2e8f0; padding: 20px; border-radius: 10px; border: 1px solid var(--border-color); font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.85rem; overflow-y: auto; height: 100%; line-height: 1.4; }
+        /* Ajuste estético sin bordes brillantes ni márgenes raros */
+        pre { background: #090d16; color: #cbd5e1; padding: 18px 24px; border-radius: 10px; border: 1px solid #1e293b; font-family: 'JetBrains Mono', 'Fira Code', 'Consolas', monospace; font-size: 0.85rem; overflow-y: auto; width: 100%; max-height: 380px; line-height: 1.45; }
+        code { background: transparent; padding: 0; border: none; }
+        
+        .code-comment { color: #64748b; font-style: italic; }
         
         .image-container { 
             margin-top: 5px; 
@@ -103,7 +104,6 @@
             object-fit: contain;
         }
 
-        /* Contenedor Integrado y Estilizado para el Diagrama de Flujo */
         .flowchart-container {
             text-align: center;
             background: #0b1329;
@@ -142,7 +142,6 @@
             border-radius: 4px;
         }
 
-        /* Sistema de Modal Interactiva (Zoom Pantalla Completa) */
         .modal {
             display: none;
             position: fixed;
@@ -188,7 +187,6 @@
             color: var(--blue-primary);
         }
         
-        /* Controles fijados correctamente abajo */
         .controls { position: fixed; bottom: 25px; right: 80px; display: flex; gap: 12px; z-index: 100; }
         .btn { background: #1e293b; color: var(--text-main); border: 1px solid var(--border-color); padding: 10px 24px; font-size: 0.95rem; font-weight: 500; border-radius: 8px; cursor: pointer; transition: all 0.2s; }
         .btn:hover { background: var(--blue-primary); color: var(--bg-main); border-color: var(--blue-primary); }
@@ -198,6 +196,10 @@
         li { margin-bottom: 8px; color: var(--text-muted); }
         li strong { color: var(--text-main); }
         .highlight { color: var(--blue-primary); font-weight: 600; margin-bottom: 6px; }
+
+        /* Estilo Grid para acomodar puntos críticos en horizontal */
+        .points-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-top: 15px; }
+        .point-item { background: #17255422; border-left: 3px solid var(--blue-primary); padding: 10px 15px; border-radius: 0 8px 8px 0; font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -227,7 +229,7 @@
         <div class="content">
             <div class="half-width card">
                 <h3 class="highlight">¿Qué es ordenar datos?</h3>
-                <p style="color: var(--text-muted); margin-bottom: 20px;">Es el proceso de organizar elementos de una colección en una secuencia específica (ascendente o descendente) basado en un criterio de comparación lógica.</p>
+                <p style="color: var(--text-muted); margin-bottom: 20px;">Es el proceso de organizing elementos de una colección en una secuencia específica (ascendente o descendente) basado en un criterio de comparación lógica.</p>
                 <h3 class="highlight">Tipos de datos soportados:</h3>
                 <ul>
                     <li><strong>Numéricos:</strong> Enteros (`int`) y de punto flotante (`float`).</li>
@@ -237,7 +239,7 @@
             <div class="half-width card" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
                 <h3 class="highlight">Objetivo del Método Shell Sort</h3>
                 <p style="color: var(--text-muted); margin-bottom: 20px;">Optimizar el ordenamiento por inserción directa tradicional al permitir la comparación e intercambio de elementos que se encuentran en posiciones distantes, reduciendo drásticamente los desplazamientos necesarios.</p>
-                <h3 class="highlight">Situación Real de Aplicación</h3>
+                <h3 class="highlight">Situación Real de Application</h3>
                 <p style="color: var(--text-muted);">Sistemas embebidos y dispositivos IoT con memoria RAM extremadamente limitada que necesitan procesar y ordenar ráfagas de lecturas rápidas sin incurrir en desbordamientos de pila causados por recursión masiva.</p>
             </div>
         </div>
@@ -304,63 +306,61 @@
     </div>
 
     <div class="slide-container" id="slide5">
-        <div class="slide-header"><h1>D. Implementación Técnico en Python</h1></div>
-        <div class="content">
-            <div class="half-width" style="height: 100%;">
-<pre><code>def shell_sort(lista):
+        <div class="slide-header"><h1>D. Implementación Técnica en Python</h1></div>
+        <div class="content full-width card" style="flex-direction: column; gap: 15px; justify-content: flex-start;">
+            
+            <pre><code>def shell_sort(lista):
     largo = len(lista)
     
     if largo <= 1:
-        return lista
+        return lista <span class="code-comment"># Caso base: lista vacía o de 1 elemento</span>
         
-    salto = largo // 2
+    salto = largo // 2 <span class="code-comment"># Brecha inicial entre comparaciones</span>
     
     while salto > 0:
         for i in range(salto, largo):
-            valor_temporal = lista[i]
+            valor_temporal = lista[i] <span class="code-comment"># Respaldamos valor actual</span>
             posicion = i
             
+            <span class="code-comment"># Desplazamiento por bloques virtuales hacia la derecha</span>
             while posicion >= salto and lista[posicion - salto] > valor_temporal:
                 lista[posicion] = lista[posicion - salto]
                 posicion -= salto
                 
             lista[posicion] = valor_temporal
             
-        salto //= 2
+        salto //= 2 <span class="code-comment"># El salto se reduce de forma convergente</span>
         
+    <span class="code-comment"># Bloque estético: Limpieza de flotantes .0 innecesarios</span>
     if len(lista) > 0 and isinstance(lista[0], (int, float)):
         lista_limpia = [int(x) if hasattr(x, 'is_integer') and x.is_integer() else x for x in lista]
         return lista_limpia
         
     return lista
 
-entrada_usuario = input("Ingrese una lista (pueden ser números enteros, decimales o palabras) separados por espacios: ")
+entrada_usuario = input("Ingrese una lista (números o palabras) separados por espacios: ")
 elementos = entrada_usuario.split()
-
 mi_lista = []
 
 if elementos:
     try:
-        mi_lista = [float(x) for x in elementos]
+        mi_lista = [float(x) for x in elementos] <span class="code-comment"># Intenta parsear entrada numérica</span>
     except ValueError:
-        mi_lista = elementos
+        mi_lista = elementos <span class="code-comment"># Si hay letras, lo captura como str alfabético</span>
 else:
-    mi_lista = []
-
-print("\nArreglo original:", mi_lista)
-lista_ordenada = shell_sort(mi_lista)
-print("Arreglo ordenado:", lista_ordenada)
+    mi_lista = [] <span class="code-comment"># Control estricto de entrada vacía</span>
 </code></pre>
+
+            <div style="margin-top: 5px;">
+                <h3 class="highlight" style="font-size: 1.1rem;">Puntos Críticos de la Implementación</h3>
+                <div class="points-grid">
+                    <div class="point-item"><strong>Desarrollo Manual Puro:</strong> Sin depender de métodos nativos prohibidos como <code>.sort()</code> o <code>sorted()</code>.</div>
+                    <div class="point-item"><strong>Nomenclatura Clara:</strong> Variables explícitas en español (<code>salto</code>, <code>valor_temporal</code>) reemplazando letras ambiguas.</div>
+                    <div class="point-item"><strong>Uso Eficiente de Memoria:</strong> El ordenamiento es <em>In-place</em> (O(1)), optimizando los índices internos.</div>
+                    <div class="point-item"><strong>Manejo de Errores:</strong> Captura inteligentemente tipos heterogéneos y retornos vacíos sin romperse.</div>
+                </div>
             </div>
-            <div class="half-width card">
-                <h3 class="highlight">Puntos Críticos de la Implementación</h3>
-                <ul style="font-size: 0.95rem;">
-                    <li><strong>Uso Estricto de Funciones:</strong> Recibe la colección directamente como parámetro y efectúa un `return` limpio.</li>
-                    <li><strong>Prohibición de Métodos Nativos:</strong> No se utiliza `sort()` ni `sorted()`, garantizando el desarrollo manual puro.</li>
-                    <li><strong>Variables Comprensibles:</strong> Se reemplazan nomenclaturas ambiguas por términos explícitos en español (`salto`, `valor_temporal`, `posicion`).</li>
-                    <li><strong>Manejo Óptimo de Memoria:</strong> Opera de forma <em>In-place</em> modificando los índices internos existentes.</li>
-                </ul>
-            </div>
+
         </div>
     </div>
 
@@ -505,11 +505,9 @@ print("Arreglo ordenado:", lista_ordenada)
             document.querySelectorAll('.slide-container').forEach(slide => slide.classList.remove('active'));
             document.getElementById('slide' + currentSlide).classList.add('active');
             
-            // Actualizar barra de progreso
             const progressPercent = ((currentSlide - 1) / (totalSlides - 1)) * 100;
             document.getElementById('progress').style.width = progressPercent + '%';
             
-            // Actualizar número de diapositiva
             document.getElementById('slideNum').innerText = `Diapositiva ${currentSlide} de ${totalSlides}`;
         }
 
@@ -527,7 +525,6 @@ print("Arreglo ordenado:", lista_ordenada)
             }
         }
 
-        // Sistema Interactivo de Zoom para las imágenes
         function openImage(imgSrc) {
             const modal = document.getElementById('imageModal');
             const modalImg = document.getElementById('modalImg');
@@ -540,11 +537,9 @@ print("Arreglo ordenado:", lista_ordenada)
             modal.classList.remove('open');
         }
 
-        // Permitir uso del teclado (Flechas y Escape)
         document.addEventListener('keydown', function(e) {
             if (e.key === 'Escape') closeImage();
             
-            // Solo navegar por diapositivas si el visor de imagen está cerrado
             if (!document.getElementById('imageModal').classList.contains('open')) {
                 if (e.key === 'ArrowRight') nextSlide();
                 if (e.key === 'ArrowLeft') prevSlide();
